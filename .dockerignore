@@ -1,0 +1,9 @@
+.git
+.env
+vendor
+node_modules
+storage/app/optimized/*
+storage/app/upload/*
+storage/logs
+tags
+tools

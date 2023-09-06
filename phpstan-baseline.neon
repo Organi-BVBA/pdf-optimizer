@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method Spatie\\\\Image\\\\Manipulations\\:\\:save\\(\\)\\.$#"
+			count: 1
+			path: app/Jobs/OptimizeImage.php
+

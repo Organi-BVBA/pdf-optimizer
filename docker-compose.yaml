@@ -1,0 +1,26 @@
+---
+version: '3'
+services:
+  app:
+    container_name: pdf-optimizer
+    build:
+      context: ./
+    ports:
+      - "8084:80"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=mysql
+      - DB_DATABASE=pdf_optimizer
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.pdf-optimizer.entrypoints: "web"
+      traefik.http.routers.pdf-optimizer.rule: "Host(`pdf-optimizer.loc`)"
+networks:
+  default:
+    external:
+      name: user-bridge
