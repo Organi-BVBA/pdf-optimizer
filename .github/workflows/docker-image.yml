@@ -28,4 +28,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/php-optimizer:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pdf-optimizer:latest

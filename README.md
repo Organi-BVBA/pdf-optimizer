@@ -11,5 +11,5 @@ docker run \
     --restart=always \
     --detach=true \
     --name=pdf-optimizer \
-    organirvk/pdf-optimizer
+    rvkorgani/pdf-optimizer
 ```
