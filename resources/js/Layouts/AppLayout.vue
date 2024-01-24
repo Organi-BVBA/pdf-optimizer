@@ -366,7 +366,7 @@
       </main>
 
       <footer class="pt-12 text-xs text-center text-gray-400">
-        Shopfloor v{{ $page.props.app_versions.app }}
+        Version v{{ $page.props.app_versions.app }}
         -
         Laravel v{{ $page.props.app_versions.laravel }}
         -
