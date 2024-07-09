@@ -20,9 +20,6 @@ else
   fi
 fi
 
-chgrp -R www-data storage /data
-chmod -R ug+rwx storage /data
-
 # Install the required packages
 composer install --no-interaction --optimize-autoloader --no-dev
 

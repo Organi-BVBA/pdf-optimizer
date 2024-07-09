@@ -2,7 +2,6 @@
 
 ```bash
 docker run \
-    --volume=$PWD/data:/data \
     --publish=8081:80 \
     --env=DB_HOST=mysql \
     --env=DB_DATABASE=pdf_optimizer \
