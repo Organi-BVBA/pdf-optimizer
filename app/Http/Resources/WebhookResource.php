@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Constants\Status;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class WebhookResource extends JsonResource
@@ -13,7 +14,7 @@ class WebhookResource extends JsonResource
      *
      * @param  Request  $request
      *
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     * @return array|Arrayable|\JsonSerializable
      */
     public function toArray($request)
     {
