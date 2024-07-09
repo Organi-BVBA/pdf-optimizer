@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 return [
     // Option to disable auth
     'disabled' => env('DISABLE_AUTH', false),
@@ -64,7 +66,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => App\Models\User::class,
+            'model'  => User::class,
         ],
 
         // 'users' => [
