@@ -41,7 +41,7 @@ RUN a2enmod rewrite
 # Copy Composer binary from the Composer official Docker image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/000-default.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Set the working directory
 WORKDIR /var/www/html
