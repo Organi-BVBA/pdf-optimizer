@@ -13,7 +13,7 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response)  $next
+     * @param  \Closure(Request): (RedirectResponse|Response)  $next
      * @param  null|string  ...$guards
      *
      * @return RedirectResponse|Response
