@@ -1,0 +1,84 @@
+pipeline {
+    agent none
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Install JS packages') {
+            agent {
+                docker {
+                    image 'node'
+                    args '-v /tmp/node_cache:/tmp/node_cache'
+                }
+            }
+            steps {
+                sh '''
+                    yarn config set cache-folder /tmp/node_cache
+                    yarn
+                '''
+            }
+        }
+
+        stage('Build frontend assets') {
+            agent {
+                docker {
+                    image 'node'
+                }
+            }
+            steps {
+                sh 'yarn build'
+            }
+        }
+
+        stage('Install deployer') {
+            agent {
+                docker {
+                    image 'composer'
+                    args '-v /tmp/composer_cache:/tmp/composer_cache'
+                }
+            }
+            steps {
+                sh '''
+                    composer config cache-dir /tmp/composer_cache
+                    composer install --working-dir=tools/deployer --ignore-platform-reqs
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            agent {
+                docker {
+                    image 'rvkorgani/php-ssh-git:8.1'
+                    args '-v /home/ansible/.ssh/known_hosts:/home/user/.ssh/known_hosts'
+                }
+            }
+            environment {
+                USERNAME_ORWILXPHP05 = credentials('USERNAME_ORWILXPHP05')
+            }
+            steps {
+                sshagent(credentials: ['orwijena01', 'bitbucket']) {
+                    sh '''
+                        tools/deployer/vendor/bin/dep deploy server -o deploy_path=/home/jenkins/websites/pdf-optimizer.organi.be
+                        ssh $USERNAME_ORWILXPHP05@orwilxphp05.orwigroup.int "docker exec pdf-optimizer-organi-be bash -c \\"cd /var/www/html/release ; /usr/bin/composer install --verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader --ignore-platform-reqs\\""
+                        ssh $USERNAME_ORWILXPHP05@orwilxphp05.orwigroup.int "docker exec pdf-optimizer-organi-be bash -c \\"php /var/www/html/release/artisan storage:link\\""
+                        rsync --mkpath --delete -av ./public/build $USERNAME_ORWILXPHP05@orwilxphp05.orwigroup.int:~/websites/pdf-optimizer.organi.be/current/public/
+                        ssh $USERNAME_ORWILXPHP05@orwilxphp05.orwigroup.int "docker exec pdf-optimizer-organi-be bash -c \\"php /var/www/html/release/artisan down --render=errors::503\\""
+                        ssh $USERNAME_ORWILXPHP05@orwilxphp05.orwigroup.int "docker exec pdf-optimizer-organi-be bash -c \\"php /var/www/html/release/artisan migrate --force\\""
+                        ssh $USERNAME_ORWILXPHP05@orwilxphp05.orwigroup.int "docker exec pdf-optimizer-organi-be bash -c \\"php /var/www/html/release/artisan db:seed --force\\""
+                        ssh $USERNAME_ORWILXPHP05@orwilxphp05.orwigroup.int "docker exec pdf-optimizer-organi-be bash -c \\"php /var/www/html/release/artisan up\\""
+                        tools/deployer/vendor/bin/dep deploy:symlink server -f deploy-staging.yml --branch=$BRANCH_NAME -o deploy_path=/home/$USERNAME_ORWILXPHP05/websites/pdf-optimizer.organi.be
+                        tools/deployer/vendor/bin/dep deploy:unlock server -f deploy-staging.yml --branch=$BRANCH_NAME -o deploy_path=/home/$USERNAME_ORWILXPHP05/websites/pdf-optimizer.organi.be
+                        tools/deployer/vendor/bin/dep deploy:cleanup server -f deploy-staging.yml --branch=$BRANCH_NAME -o deploy_path=/home/$USERNAME_ORWILXPHP05/websites/pdf-optimizer.organi.be
+                        tools/deployer/vendor/bin/dep deploy:success server -f deploy-staging.yml --branch=$BRANCH_NAME -o deploy_path=/home/$USERNAME_ORWILXPHP05/websites/pdf-optimizer.organi.be
+                        ssh $USERNAME_ORWILXPHP05@orwilxphp05.orwigroup.int "docker exec pdf-optimizer-organi-be bash -c \\"php /var/www/html/current/artisan optimize\\""
+                    '''
+                }
+            }
+        }
+
+    }
+}
+
+

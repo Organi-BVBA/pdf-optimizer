@@ -1,0 +1,50 @@
+import:
+  - recipe/common.php
+
+config:
+  application: pdf-optimizer.shopfloor.be
+  keep_releases: 3
+  repository: ssh://git@altssh.bitbucket.org:443/organi_team/pdf-optimizer.organi.be.git
+  shared_files:
+    - .env
+  shared_dirs:
+    - storage
+
+  writable_dirs: []
+  'bin/composer': >
+    docker run --rm
+    --volume ~/.composer_cache:/tmp/cache/
+    --volume {{deploy_path}}:{{deploy_path}}
+    --volume $SSH_AUTH_SOCK:/ssh-auth.sock
+    --volume /etc/passwd:/etc/passwd:ro
+    --volume /etc/group:/etc/group:ro
+    --volume ~/.ssh/known_hosts:$HOME/.ssh/known_hosts
+    --env SSH_AUTH_SOCK=/ssh-auth.sock
+    --user $(id -u):$(id -g)
+    -w {{release_path}}
+    composer \
+  composer_options: --verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader --ignore-platform-reqs
+
+hosts:
+  server:
+    hostname: jenkins@orwilxphp05.orwigroup.int
+    stage: production
+    forwardAgent: true
+    branch: master
+
+tasks:
+  deploy:
+    - deploy:info
+    - deploy:setup
+    - deploy:release
+    - deploy:update_code
+    - deploy:shared
+    - deploy:writable
+    - deploy:vendors
+
+  publish:
+    - deploy:publish
+
+after:
+  deploy:failed: deploy:unlock
+
