@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Psr\Log\LogLevel;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -9,7 +10,7 @@ class Handler extends ExceptionHandler
     /**
      * A list of exception types with their corresponding custom log levels.
      *
-     * @var array<class-string<\Throwable>, \Psr\Log\LogLevel::*>
+     * @var array<class-string<\Throwable>, LogLevel::*>
      */
     protected $levels = [
         //
