@@ -1,0 +1,6 @@
+{
+    "minimum-stability": "dev",
+    "require": {
+        "deployer/deployer": "^7.0"
+    }
+}
