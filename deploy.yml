@@ -4,7 +4,7 @@ import:
 config:
   application: pdf-optimizer.shopfloor.be
   keep_releases: 3
-  repository: ssh://git@altssh.bitbucket.org:443/organi_team/pdf-optimizer.organi.be.git
+  repository: ssh://git@ssh.github.com:443/Organi-BVBA/pdf-optimizer.git
   shared_files:
     - .env
   shared_dirs:
